@@ -42,7 +42,7 @@
 export function createTiffinPlan({ name, mealType = "veg", days = 30 } = {}) {
   
   if(mealType === null || mealType === undefined) return null;
-  if(name === null || name.length === 0) return null;
+  if(name === undefined || name.length === 0) return null;
 
   let dailyRate = {
     veg: 80,
@@ -88,5 +88,26 @@ export function combinePlans(...plans) {
 export function applyAddons(plan, ...addons) {
   // Your code here
 
-  
+  if(plan === null) return null;
+
+  let total_addOnPrice = 0;
+  for(let price of addons){
+    total_addOnPrice += addons.price || 0;
+  }
+
+  // addon name
+  const addonName = addons.map((Name) => addonName.name);
+
+  // daily rate
+  const newDailyRate = plan.dailyRate + total_addOnPrice;
+
+  // new total cost
+  const newTotalCost = newDailyRate * plan.days;
+
+  return{
+    ...plan,
+    dailyRate: newDailyRate,
+    totalCost: newTotalCost,
+    addonNames: addonName
+  }
 }
