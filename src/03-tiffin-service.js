@@ -40,13 +40,53 @@
  *   // => { totalCustomers: 3, totalRevenue: 7200, mealBreakdown: { veg: 2, nonveg: 1 } }
  */
 export function createTiffinPlan({ name, mealType = "veg", days = 30 } = {}) {
-  // Your code here
+  
+  if(mealType === null || mealType === undefined) return null;
+  if(name === null || name.length === 0) return null;
+
+  let dailyRate = {
+    veg: 80,
+    nonveg: 120,
+    jain: 90
+  }
+  if(dailyRate[mealType] === undefined) return null;  
+  let totalCost = dailyRate[mealType] * days;
+
+  return {
+    name: name,
+    mealType: mealType,
+    days: days,
+    dailyRate: dailyRate[mealType],
+    totalCost: totalCost
+  }
 }
 
 export function combinePlans(...plans) {
-  // Your code here
+  
+  if(plans.length === 0) return null;
+
+  let totalCustomers = plans.length;
+  let totalRevenue = 0;
+  let mealBreakdown = {};
+
+  for(let plan of plans){
+    // add revenue
+    totalRevenue += plan.totalCost || 0;
+
+    // count meal types
+    const type = plan.mealType;
+    mealBreakdown[type] = (mealBreakdown[type] || 0) + 1;
+  }
+
+  return{
+    totalCustomers,
+    totalRevenue,
+    mealBreakdown
+  }
 }
 
 export function applyAddons(plan, ...addons) {
   // Your code here
+
+  
 }
