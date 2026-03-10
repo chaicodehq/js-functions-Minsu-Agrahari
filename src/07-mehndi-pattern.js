@@ -53,21 +53,73 @@
  *   generatePattern(3)        // => ["*", "**", "***", "**", "*"]
  */
 export function repeatChar(char, n) {
-  // Your code here
+  // base case
+  if(n <= 0 || typeof char !== "string") return "";
+
+  // reccurssive logic
+  return char + repeatChar(char, n-1);
+
 }
 
 export function sumNestedArray(arr) {
-  // Your code here
+  // validation 
+  if(!Array.isArray(arr)) return 0;
+
+  let flatArr = arr.flat(Infinity);
+  let sum = 0;
+
+  for(let num of flatArr){
+    if(typeof num === "number")
+    sum += num;
+  }
+
+  return sum;
 }
 
 export function flattenArray(arr) {
-  // Your code here
+  // validation
+  if(!Array.isArray(arr)) return [];
+
+  let flatArr = arr.flat(Infinity);
+
+  return flatArr;
 }
 
 export function isPalindrome(str) {
-  // Your code here
+  // validation
+  if(typeof str !== "string") return false;
+
+  let startIdx = 0;
+  let endIdx = str.length-1;
+
+  str = str.toLowerCase();
+  while(startIdx < endIdx){
+    if(str[startIdx] != str[endIdx]){
+      return false;
+    }
+
+    startIdx++;
+    endIdx--;
+  }
+  
+  return true;
 }
 
 export function generatePattern(n) {
-  // Your code here
+  // validation
+  if(!Number.isInteger(n) || n <= 0) return [];
+
+  let result = [];
+
+  // inc part
+  for(let i=1; i<=n; i++){
+    result.push("*".repeat(i));
+  }
+
+  // dec part
+  for(let i=n-1; i>=1; i--){
+    result.push("*".repeat(i));
+  }
+
+  return result;
 }
