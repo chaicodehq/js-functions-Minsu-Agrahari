@@ -64,17 +64,135 @@
  *   // => "voted!"
  */
 export function createElection(candidates) {
-  // Your code here
+
+  const votes = {};
+  const registered = new Set();
+  const voted = new Set();
+
+  for (let c of candidates) {
+    votes[c.id] = 0;
+  }
+
+  return {
+
+    registerVoter(voter) {
+
+      if (!voter || !voter.id || voter.age < 18) return false;
+
+      if (registered.has(voter.id)) return false;
+
+      registered.add(voter.id);
+
+      return true;
+    },
+
+    castVote(voterId, candidateId, onSuccess, onError) {
+
+      if (!registered.has(voterId)) {
+        return onError("voter not registered");
+      }
+
+      if (!(candidateId in votes)) {
+        return onError("candidate not found");
+      }
+
+      if (voted.has(voterId)) {
+        return onError("already voted");
+      }
+
+      votes[candidateId] += 1;
+      voted.add(voterId);
+
+      return onSuccess({ voterId, candidateId });
+    },
+
+    getResults(sortFn) {
+
+      let result = [];
+
+      for (let c of candidates) {
+        result.push({
+          id: c.id,
+          name: c.name,
+          party: c.party,
+          votes: votes[c.id]
+        });
+      }
+
+      if (sortFn) {
+        result.sort(sortFn);
+      } else {
+        result.sort((a, b) => b.votes - a.votes);
+      }
+
+      return result;
+    },
+
+    getWinner() {
+
+      let max = -1;
+      let winner = null;
+
+      for (let c of candidates) {
+        if (votes[c.id] > max) {
+          max = votes[c.id];
+          winner = c;
+        }
+      }
+
+      if (max === 0) return null;
+
+      return winner;
+    }
+  };
 }
 
 export function createVoteValidator(rules) {
-  // Your code here
+
+  return function(voter) {
+
+    if (!voter) {
+      return { valid: false, reason: "invalid voter" };
+    }
+
+    for (let field of rules.requiredFields) {
+      if (!(field in voter)) {
+        return { valid: false, reason: "missing " + field };
+      }
+    }
+
+    if (voter.age < rules.minAge) {
+      return { valid: false, reason: "age too low" };
+    }
+
+    return { valid: true };
+  };
 }
 
 export function countVotesInRegions(regionTree) {
-  // Your code here
+
+  if (!regionTree || typeof regionTree.votes !== "number") return 0;
+
+  let total = regionTree.votes;
+
+  if (Array.isArray(regionTree.subRegions)) {
+    for (let sub of regionTree.subRegions) {
+      total += countVotesInRegions(sub);
+    }
+  }
+
+  return total;
 }
 
 export function tallyPure(currentTally, candidateId) {
-  // Your code here
+
+  const newTally = { ...currentTally };
+
+  if (newTally[candidateId]) {
+    newTally[candidateId] += 1;
+  } else {
+    newTally[candidateId] = 1;
+  }
+
+  return newTally;
 }
