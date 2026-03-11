@@ -49,5 +49,89 @@
  *   mgr.getUpcoming("2025-01-01", 1); // => [{ name: "Republic Day", ... }]
  */
 export function createFestivalManager() {
-  // Your code here
+
+  const festivals = [];
+  const types = ["religious", "national", "cultural"];
+
+  return {
+
+    addFestival(name, date, type) {
+
+      if (!name || typeof date !== "string" || !types.includes(type)) {
+        return -1;
+      }
+
+      // check duplicate
+      for (let f of festivals) {
+        if (f.name === name) {
+          return -1;
+        }
+      }
+
+      festivals.push({ name, date, type });
+
+      return festivals.length;
+    },
+
+    removeFestival(name) {
+
+      for (let i = 0; i < festivals.length; i++) {
+        if (festivals[i].name === name) {
+          festivals.splice(i, 1);
+          return true;
+        }
+      }
+
+      return false;
+    },
+
+    getAll() {
+
+      let result = [];
+
+      for (let f of festivals) {
+        result.push({ ...f });
+      }
+
+      return result;
+    },
+
+    getByType(type) {
+
+      let result = [];
+
+      for (let f of festivals) {
+        if (f.type === type) {
+          result.push({ ...f });
+        }
+      }
+
+      return result;
+    },
+
+    getUpcoming(currentDate, n = 3) {
+
+      let upcoming = [];
+
+      for (let f of festivals) {
+        if (f.date >= currentDate) {
+          upcoming.push({ ...f });
+        }
+      }
+
+      // simple sort by date
+      upcoming.sort(function(a, b) {
+        if (a.date > b.date) return 1;
+        if (a.date < b.date) return -1;
+        return 0;
+      });
+
+      return upcoming.slice(0, n);
+    },
+
+    getCount() {
+      return festivals.length;
+    }
+
+  };
 }
